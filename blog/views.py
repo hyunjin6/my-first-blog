@@ -4,8 +4,11 @@ from .models import Post
 from .forms import PostForm
 from django.shortcuts import redirect
 from rest_framework import viewsets
-from .serializers import PostSerializer, UserSerializer
+from .serializers import PostSerializer
 from django.contrib.auth.models import User
+
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 
 def post_list(request):
@@ -47,6 +50,17 @@ class IntruderImage(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+@csrf_exempt  # CSRF 보안 예외 처리 (테스트 목적으로)
+def post_data(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        text = request.POST.get('text')
+        created_date = request.POST.get('created_date')
+        published_date = request.POST.get('published_date')
+
+        # 데이터베이스에 저장 (모델과 필드 이름을 실제 데이터 모델에 맞게 수정)
+        Post.objects.create(title=title, text=text, created_date=created_date, published_date=published_date)
+
+        return JsonResponse({'message': 'Data posted successfully.'})
+    else:
+        return JsonResponse({'error': 'Invalid request method.'}, status=400)

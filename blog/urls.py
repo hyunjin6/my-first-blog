@@ -2,12 +2,11 @@ from django.urls import path
 from . import views
 from django.urls import include
 from django.contrib.auth.models import User
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers
 
 
 router = routers.DefaultRouter()
 router.register('Post', views.IntruderImage)
-router.register(r'users', views.UserViewSet)
 
 
 urlpatterns = [
@@ -17,6 +16,7 @@ urlpatterns = [
     path('post/<int:pk>/edit/', views.post_edit, name='post_edit'),
     path('api_root/', include(router.urls)),
     path('', include(router.urls)),
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('api_root/Post/', views.post_data, name='post_data'),
 ]
 
